@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'package:image/image.dart';
 
 import 'package:camera/camera.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
@@ -9,10 +10,12 @@ class PpgPointCalc {
   late final Isolate _isolate;
   final ReceivePort _receivePort = ReceivePort();
   StreamController<PpgPoint> _results = StreamController<PpgPoint>();
+  List<Image> _images = [];
   late final SendPort _sendPort;
   bool _initialized = false;
 
   bool get initialized => _initialized;
+  List<Image> get images => _images;
 
   void initialize() async {
     try {
@@ -23,6 +26,8 @@ class PpgPointCalc {
           _initialized = true;
         } else if (message is PpgPoint) {
           _results.add(message);
+        } else if (message is Image) {
+          _images.add(message);
         }
       });
     } catch (e) {

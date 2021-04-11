@@ -11,3 +11,11 @@ class ScanStarted extends CameraScanState {
     required this.controller,
   });
 }
+
+class ScanFinished extends CameraScanState {
+  final List<PpgPoint> points;
+
+  ScanFinished({
+    required this.points,
+  });
+}

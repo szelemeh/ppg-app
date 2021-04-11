@@ -13,13 +13,8 @@ class _ScanPageState extends State<ScanPage> {
   late final CameraScanCubit scanCubit;
 
   @override
-  void initState() {
-    scanCubit = CameraScanCubit();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    scanCubit = BlocProvider.of<CameraScanCubit>(context);
     scanCubit.startScan();
     return Scaffold(
         body: BlocBuilder(
