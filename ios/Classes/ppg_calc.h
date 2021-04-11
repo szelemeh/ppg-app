@@ -1,0 +1,1 @@
+uint32_t calculate_ppg_value_from_image(uint8_t *plane0, uint8_t *plane1, uint8_t *plane2, int bytes_per_row, int bytes_per_pixel, int width, int height, int red_threshhold);

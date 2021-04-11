@@ -6,21 +6,21 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:ffi/ffi.dart';
 
-typedef calc_function = Pointer<Uint32> Function(
-    Pointer<Uint8>, Pointer<Uint8>, Pointer<Uint8>, Int32, Int32, Int32, Int32);
-typedef Calculate = Pointer<Uint32> Function(
-    Pointer<Uint8>, Pointer<Uint8>, Pointer<Uint8>, int, int, int, int);
+typedef calc_function = Uint32 Function(
+    Pointer<Uint8>, Pointer<Uint8>, Pointer<Uint8>, Int32, Int32, Int32, Int32, Int32);
+typedef Calculate = int Function(
+    Pointer<Uint8>, Pointer<Uint8>, Pointer<Uint8>, int, int, int, int, int);
 
 class PpgValueCalc {
   late Calculate calc;
 
   PpgValueCalc() {
     final DynamicLibrary calcImageLib = Platform.isAndroid
-        ? DynamicLibrary.open("libconvert_image.so")
+        ? DynamicLibrary.open("libppg_calc.so")
         : DynamicLibrary.process();
 
     calc = calcImageLib
-        .lookup<NativeFunction<calc_function>>("convertImage")
+        .lookup<NativeFunction<calc_function>>("calculate_ppg_value_from_image")
         .asFunction<Calculate>();
   }
 
@@ -40,18 +40,13 @@ class PpgValueCalc {
     pointerList2.setRange(
         0, image.planes[2].bytes.length, image.planes[2].bytes);
 
-    Pointer<Uint32> imagePointer = calc(p0, p1, p2, image.planes[1].bytesPerRow,
-        image.planes[1].bytesPerPixel!, image.width, image.height);
+    int result = calc(p0, p1, p2, image.planes[1].bytesPerRow,
+        image.planes[1].bytesPerPixel!, image.width, image.height, 50);
 
-    Uint32List list = imagePointer.asTypedList(image.width * image.height);
-
-    print(list[0]);
-    int result = imagePointer.address;
 
     calloc.free(p0);
     calloc.free(p1);
     calloc.free(p2);
-    calloc.free(imagePointer);
 
     return result;
   }

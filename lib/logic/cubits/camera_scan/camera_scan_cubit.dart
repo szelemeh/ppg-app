@@ -13,7 +13,7 @@ class CameraScanCubit extends Cubit<CameraScanState> {
 
   void startScan() async {
     List<CameraDescription> cameras = await availableCameras();
-    final controller = CameraController(cameras[0], ResolutionPreset.veryHigh);
+    final controller = CameraController(cameras[0], ResolutionPreset.low);
     await controller.initialize();
     calc.initialize();
     calc.getResultsStream().listen((ppgPoint) {

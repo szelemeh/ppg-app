@@ -20,12 +20,11 @@ class PpgPointCalc {
       _receivePort.listen((message) {
         if (message is SendPort) {
           _sendPort = message;
-          print("sendPort is now ready!");
+          _initialized = true;
         } else if (message is PpgPoint) {
           _results.add(message);
         }
       });
-      _initialized = true;
     } catch (e) {
       print("Error: $e");
     }
