@@ -26,8 +26,19 @@ class _ScanPageState extends State<ScanPage> {
               state.controller,
             ),
           );
+        } else if (state is ScanRunning) {
+          return MaterialApp(
+              home: CameraPreview(
+            state.controller,
+            child: Center(
+              child: Text(
+                state.radius.toString(),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ));
         }
-        return Scaffold(body: CircularProgressIndicator());
+        return Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     ));
   }

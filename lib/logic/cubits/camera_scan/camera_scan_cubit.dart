@@ -10,36 +10,41 @@ part 'camera_scan_state.dart';
 class CameraScanCubit extends Cubit<CameraScanState> {
   final List<PpgPoint> ppgPointList = [];
   final PpgPointCalc calc = PpgPointCalc();
+  late final CameraController controller;
   CameraScanCubit() : super(CameracubitInitial());
 
   void startScan() async {
     List<CameraDescription> cameras = await availableCameras();
-    final controller = CameraController(cameras[0], ResolutionPreset.medium);
-    await controller.initialize();
+    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    if (!controller.value.isInitialized) {
+      await controller.initialize();
+    }
     calc.initialize();
     calc.getResultsStream().listen((ppgPoint) {
       ppgPointList.add(ppgPoint);
+      emit(ScanRunning(radius: ppgPoint.value, controller: controller));
     });
     controller.startImageStream((image) {
       calc.addTask(image);
     });
-    controller.setFlashMode(FlashMode.torch);
+    // controller.setFlashMode(FlashMode.torch);
     emit(ScanStarted(controller: controller));
   }
 
   void stopScan() {
-    if (state is ScanStarted) {
-      final currentState = state as ScanStarted;
-      currentState.controller.setFlashMode(FlashMode.off);
-      if (currentState.controller.value.isStreamingImages) {
-        currentState.controller.stopImageStream();
+    if (state is ScanRunning) {
+      controller.setFlashMode(FlashMode.off);
+      if (controller.value.isStreamingImages) {
+        controller.stopImageStream();
       }
       calc.dispose();
       int initialTime = ppgPointList[0].timestamp;
-      final shifted = ppgPointList
-          .map((p) => PpgPoint(
-              timestamp: (p.timestamp - initialTime), value: p.value))
+      List<PpgPoint> shifted = ppgPointList
+          .map((p) =>
+              PpgPoint(timestamp: (p.timestamp - initialTime), value: p.value))
           .toList();
+      int part = shifted.length ~/ 10;
+      shifted = shifted.getRange(part, shifted.length - part).toList();
       emit(ScanFinished(points: shifted));
     }
   }

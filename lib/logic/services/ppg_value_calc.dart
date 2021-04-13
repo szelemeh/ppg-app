@@ -47,7 +47,7 @@ class PpgValueCalc {
     Uint32List imgData = imgP.asTypedList(image.width * image.height);
 
     // int result = calculatePpgValue(imgData, image.width, image.height, 249);
-    int result = calculatePpgValue(imgData, image.width, image.height, 200);
+    int result = calculatePpgValue(imgData, image.width, image.height, 50);
 
     calloc.free(p0);
     calloc.free(p1);

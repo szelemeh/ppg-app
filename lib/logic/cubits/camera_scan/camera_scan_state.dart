@@ -12,6 +12,15 @@ class ScanStarted extends CameraScanState {
   });
 }
 
+class ScanRunning extends CameraScanState {
+  final int radius;
+  final CameraController controller;
+  ScanRunning({
+    required this.controller,
+    required this.radius,
+  });
+}
+
 class ScanFinished extends CameraScanState {
   final List<PpgPoint> points;
 

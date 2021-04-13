@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ppg_hrv_app/interface/pages/scan_page.dart';
-import 'package:ppg_hrv_app/interface/widgets/graph.dart';
+import 'package:ppg_hrv_app/interface/widgets/chart.dart';
 import 'package:ppg_hrv_app/logic/cubits/camera_scan/camera_scan_cubit.dart';
 
 class HomePage extends StatelessWidget {
