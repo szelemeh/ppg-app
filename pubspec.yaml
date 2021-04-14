@@ -14,8 +14,9 @@ dependencies:
   bloc: ^7.0.0
   camera: ^0.8.1
   ffi: ^1.0.0
+  fl_chart: ^0.35.0
   flutter_bloc: ^7.0.0
-  image: ^2.1.12
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:
