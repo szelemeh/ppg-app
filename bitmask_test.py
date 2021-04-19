@@ -1,5 +1,7 @@
+from os import writev
 import matplotlib.pyplot as plt
 from PIL import Image
+from numpy.lib.type_check import imag
 from scipy.ndimage.filters import gaussian_filter1d
 import multiprocessing as mp
 import numpy as np
@@ -66,17 +68,20 @@ def find_center(bitmask, width, height):
 
 def draw_center(bitmask, x, y):
     margin = 10
-    for x in range(x-margin, x+margin):
-        for y in range(y-margin, y+margin):
-            bitmask[x][y] = 2
+    for mx in range(x-margin, x+margin):
+        for my in range(y-margin, y+margin):
+            bitmask[mx][my] = 2
 
-
-def show_bitmask(bitmask):
+def list_to_np_array(bitmask):
     image_array = np.array(bitmask, dtype=np.uint8)
     image_array.astype(dtype=np.uint8)
+    return image_array
+
+def show_bitmask(bitmask):
 
     plt.imshow(bitmask, interpolation='none')
-    plt.show()
+    plt.draw()
+    plt.pause(0.016)
 
 
 results = []
@@ -167,7 +172,7 @@ def calculateParallel(frames, processes=mp.cpu_count()):
     return results
 
 
-if __name__ == '__main__':
+def create_ppg_chart():
     frames = get_frames('test_video.mp4')
     start_time = time.time()
     results = calculateParallel(frames)
@@ -181,3 +186,37 @@ if __name__ == '__main__':
     # p = plt.plot(x, y, '-ok')
     plt.show()
     print(f"Duration {duration} seconds")
+
+def put_center_point(bitmask, width, height):
+    x, y = find_center(bitmask, width, height)
+    draw_center(bitmask, x, y)
+
+def write_bitmask(bitmask, out):
+    image = list_to_np_array(bitmask)
+    out.write(image)
+
+def create_bitmask_video(path, out_path):
+    cap = cv2.VideoCapture(path)
+    frames = []
+    c = 0
+    frame_size = (1080, 1920)
+    # out = cv2.VideoWriter(out_path,cv2.VideoWriter_fourcc(*'mp4v'), 30, frame_size)
+
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        frames.append(frame)
+        # cv2.filter2D(frame,)
+        bitmask = np.array(create_bitmask_cv(RED_THRESHOLD, frame), dtype=np.uint8)
+        put_center_point(bitmask, 1920, 1080)
+        show_bitmask(bitmask)
+        c+=1
+        if c == 300 or frame is None:
+            break
+    cap.release()
+    # out.release()
+    cv2.destroyAllWindows()
+    return frames
+
+if __name__ == '__main__':
+    # create_ppg_chart()
+    create_bitmask_video('test_video.mp4', 'out_bitmask.mp4')
