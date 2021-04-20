@@ -37,7 +37,7 @@ def create_bitmask_cv(red_threshold, array):
             # print(f'{int(r)} > {red_threshold}: {int(r) > red_threshold}')
             # print(int(r) > red_threshold)
             if (int(r) > red_threshold):
-                row.append(1)
+                row.append(150)
             else:
                 row.append(0)
         arr.append(row)
@@ -70,7 +70,7 @@ def draw_center(bitmask, x, y):
     margin = 10
     for mx in range(x-margin, x+margin):
         for my in range(y-margin, y+margin):
-            bitmask[mx][my] = 2
+            bitmask[mx][my] = 255
 
 def list_to_np_array(bitmask):
     image_array = np.array(bitmask, dtype=np.uint8)
@@ -164,9 +164,22 @@ def get_frames(path):
     return frames
 
 
-def calculateParallel(frames, processes=mp.cpu_count()):
+def calculateParallelPpgValues(frames, processes=mp.cpu_count()):
     pool = mp.Pool(processes)
     results = pool.map(get_ppg_value, frames)
+    pool.close()
+    pool.join()
+    return results
+
+def get_bitmasked_frame(frame):
+    bitmask = create_bitmask_cv(RED_THRESHOLD, frame)
+    put_center_point(bitmask, 1920, 1080)
+    bitmask = np.array(bitmask, dtype=np.uint8)
+    return bitmask
+
+def calculateParallelBitmaskedFrames(frames, processes=mp.cpu_count()):
+    pool = mp.Pool(processes)
+    results = pool.map(get_bitmasked_frame, frames)
     pool.close()
     pool.join()
     return results
@@ -175,7 +188,7 @@ def calculateParallel(frames, processes=mp.cpu_count()):
 def create_ppg_chart():
     frames = get_frames('test_video.mp4')
     start_time = time.time()
-    results = calculateParallel(frames)
+    results = calculateParallelPpgValues(frames)
     duration = time.time() - start_time
 
     print(results)
@@ -200,23 +213,27 @@ def create_bitmask_video(path, out_path):
     frames = []
     c = 0
     frame_size = (1080, 1920)
-    # out = cv2.VideoWriter(out_path,cv2.VideoWriter_fourcc(*'mp4v'), 30, frame_size)
 
     while(cap.isOpened()):
         ret, frame = cap.read()
         frames.append(frame)
-        # cv2.filter2D(frame,)
-        bitmask = np.array(create_bitmask_cv(RED_THRESHOLD, frame), dtype=np.uint8)
-        put_center_point(bitmask, 1920, 1080)
-        show_bitmask(bitmask)
         c+=1
-        if c == 300 or frame is None:
+        if c == 350 or frame is None:
             break
     cap.release()
-    # out.release()
+    out = cv2.VideoWriter(out_path,cv2.VideoWriter_fourcc(*'MJPG'), 30, frame_size, 0)
+    start_time = time.time()
+    bitmasks = calculateParallelBitmaskedFrames(frames)
+    duration = time.time() - start_time
+    print(f"Duration {duration} seconds")
+    for bitmask in bitmasks:
+        out.write(bitmask)
+    out.release()
     cv2.destroyAllWindows()
     return frames
 
+
 if __name__ == '__main__':
     # create_ppg_chart()
-    create_bitmask_video('test_video.mp4', 'out_bitmask.mp4')
+    create_bitmask_video('test_video.mp4', 'out_bitmask.avi')
+
