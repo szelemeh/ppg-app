@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
-import 'dart:math';
 
 class Chart extends StatelessWidget {
   final List<PpgPoint> points;
