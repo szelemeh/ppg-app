@@ -7,9 +7,9 @@ import multiprocessing as mp
 import numpy as np
 import time
 import cv2
+import os
 from math import radians, tan
-img = Image.open('test5.jpeg')
-pix = img.load()
+
 
 RED_THRESHOLD = 220
 
@@ -63,6 +63,7 @@ def find_center(bitmask, width, height):
                 count += 1
     x_avg = int(x_avg)
     y_avg = int(y_avg)
+    print(x_avg, y_avg)
     return x_avg, y_avg
 
 
@@ -72,19 +73,22 @@ def draw_center(bitmask, x, y):
         for my in range(y-margin, y+margin):
             bitmask[mx][my] = 255
 
+
 def list_to_np_array(bitmask):
     image_array = np.array(bitmask, dtype=np.uint8)
     image_array.astype(dtype=np.uint8)
     return image_array
 
+
 def show_bitmask(bitmask):
 
     plt.imshow(bitmask, interpolation='none')
     plt.draw()
-    plt.pause(0.016)
+    plt.pause(500)
 
 
 results = []
+
 
 def out_of_bitmask(bitmask, x, y, width, height):
     margin = 2
@@ -94,12 +98,13 @@ def out_of_bitmask(bitmask, x, y, width, height):
             if 0 < i < width and 0 < j < height:
                 if bitmask[i][j]:
                     vote['no'] += 1
-                else: 
+                else:
                     vote['yes'] += 1
     return vote['yes'] > vote['no']
 
+
 def get_specific_radius(bitmask, a, x, y, width, height, step_function):
-    def y_function(x): 
+    def y_function(x):
         return int(tan(a)*x + y)
     mx = x
     hit_threshhold_border = False
@@ -134,7 +139,17 @@ def find_radius(bitmask, x, y, width, height):
             bitmask, a, x, y, width, height, lambda x: x-1)
         if valid:
             radiuses.append(radius)
+    print(f"Radius count {len(radiuses)}")
+    print(f"{radiuses}")
     return np.average(radiuses)
+
+
+def calculate_radius(bitmask):
+    x, y = find_center(bitmask, len(bitmask), len(bitmask[0]))
+    width = len(bitmask)
+    height = len(bitmask[0])
+    ppg_value = find_radius(bitmask, x, y, width, height)
+    return ppg_value
 
 
 def get_ppg_value(frame):
@@ -142,10 +157,7 @@ def get_ppg_value(frame):
     bitmask = create_bitmask_cv(RED_THRESHOLD, frame)
     if bitmask == None:
         return -1
-    x, y = find_center(bitmask, len(bitmask), len(bitmask[0]))
-    width = len(bitmask)
-    height = len(bitmask[0])
-    ppg_value = find_radius(bitmask, x, y, width, height)
+    ppg_value = calculate_radius(bitmask)
     return currentTime, ppg_value
 
 
@@ -156,7 +168,7 @@ def get_frames(path):
     while(cap.isOpened()):
         ret, frame = cap.read()
         frames.append(frame)
-        c+=1
+        c += 1
         if c == 330 or frame is None:
             break
     cap.release()
@@ -171,11 +183,13 @@ def calculateParallelPpgValues(frames, processes=mp.cpu_count()):
     pool.join()
     return results
 
+
 def get_bitmasked_frame(frame):
     bitmask = create_bitmask_cv(RED_THRESHOLD, frame)
     put_center_point(bitmask, 1920, 1080)
     bitmask = np.array(bitmask, dtype=np.uint8)
     return bitmask
+
 
 def calculateParallelBitmaskedFrames(frames, processes=mp.cpu_count()):
     pool = mp.Pool(processes)
@@ -200,13 +214,16 @@ def create_ppg_chart():
     plt.show()
     print(f"Duration {duration} seconds")
 
+
 def put_center_point(bitmask, width, height):
     x, y = find_center(bitmask, width, height)
     draw_center(bitmask, x, y)
 
+
 def write_bitmask(bitmask, out):
     image = list_to_np_array(bitmask)
     out.write(image)
+
 
 def create_bitmask_video(path, out_path):
     cap = cv2.VideoCapture(path)
@@ -217,11 +234,12 @@ def create_bitmask_video(path, out_path):
     while(cap.isOpened()):
         ret, frame = cap.read()
         frames.append(frame)
-        c+=1
+        c += 1
         if c == 350 or frame is None:
             break
     cap.release()
-    out = cv2.VideoWriter(out_path,cv2.VideoWriter_fourcc(*'MJPG'), 30, frame_size, 0)
+    out = cv2.VideoWriter(
+        out_path, cv2.VideoWriter_fourcc(*'MJPG'), 30, frame_size, 0)
     start_time = time.time()
     bitmasks = calculateParallelBitmaskedFrames(frames)
     duration = time.time() - start_time
@@ -235,5 +253,13 @@ def create_bitmask_video(path, out_path):
 
 if __name__ == '__main__':
     # create_ppg_chart()
-    create_bitmask_video('test_video.mp4', 'out_bitmask.avi')
-
+    # create_bitmask_video('test_video.mp4', 'out_bitmask.avi')
+    # print(img.size)
+    img = Image.open('scan.jpg')
+    print(f"size {img.size}")
+    # img = cv2.imread('scan.jpg')    
+    pix = img.load()
+    bitmask = create_bitmask_pil(RED_THRESHOLD, pix, img.width, img.height)
+    # bitmask = create_bitmask_cv(RED_THRESHOLD, img)
+    print(calculate_radius(bitmask))
+    show_bitmask(bitmask)
