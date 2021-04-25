@@ -46,3 +46,6 @@ app.*.map.json
 /android/app/release
 android/app/.cxx
 ios/build
+test_assets
+ios/Classes/include/opencv2
+android/app/src/main/cmakeLibs

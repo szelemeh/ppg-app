@@ -15,7 +15,7 @@ class FileWriter {
     return File('$localPath/$path');
   }
 
-  static writeBytesToFile(Uint8List bytes, path) async {
+  static Future writeBytesToFile(Uint8List bytes, path) async {
     final file = await _getLocalFile(path);
     await file.writeAsBytes(bytes.toList());
   }

@@ -100,7 +100,8 @@ def out_of_bitmask(bitmask, x, y, width, height):
                     vote['no'] += 1
                 else:
                     vote['yes'] += 1
-    return vote['yes'] > vote['no']
+    result = vote['yes'] > vote['no']
+    return result
 
 
 def get_specific_radius(bitmask, a, x, y, width, height, step_function):
@@ -109,6 +110,9 @@ def get_specific_radius(bitmask, a, x, y, width, height, step_function):
     mx = x
     hit_threshhold_border = False
     distance = 0
+    print(f"--------------------{a}")
+    print(x)
+
     while(0 < mx < width):
         my = y_function(mx)
         if 0 < my < height:
@@ -119,6 +123,9 @@ def get_specific_radius(bitmask, a, x, y, width, height, step_function):
         else:
             break
         mx = step_function(mx)
+    print(f"hit: {hit_threshhold_border}")
+    print(mx)
+
     return distance, hit_threshhold_border
 
 
@@ -251,15 +258,18 @@ def create_bitmask_video(path, out_path):
     return frames
 
 
-if __name__ == '__main__':
-    # create_ppg_chart()
-    # create_bitmask_video('test_video.mp4', 'out_bitmask.avi')
-    # print(img.size)
+def analyze_image():
     img = Image.open('scan.jpg')
     print(f"size {img.size}")
-    # img = cv2.imread('scan.jpg')    
-    pix = img.load()
-    bitmask = create_bitmask_pil(RED_THRESHOLD, pix, img.width, img.height)
-    # bitmask = create_bitmask_cv(RED_THRESHOLD, img)
+    img = cv2.imread('scan.jpg')
+    # pix = img.load()
+    # bitmask = create_bitmask_pil(RED_THRESHOLD, pix, img.width, img.height)
+    bitmask = create_bitmask_cv(RED_THRESHOLD, img)
     print(calculate_radius(bitmask))
     show_bitmask(bitmask)
+    # print(img.size)
+
+
+if __name__ == '__main__':
+    # create_ppg_chart()
+    create_bitmask_video('test_video.mp4', 'out_bitmask.avi')

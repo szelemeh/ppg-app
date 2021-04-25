@@ -17,6 +17,7 @@ dependencies:
   fl_chart: ^0.35.0
   flutter_bloc: ^7.0.0
   image: ^3.0.2
+  path_provider: ^2.0.1
 
 dev_dependencies:
   flutter_test:

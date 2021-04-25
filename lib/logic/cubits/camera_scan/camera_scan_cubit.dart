@@ -3,7 +3,6 @@ import 'package:camera/camera.dart';
 import 'package:meta/meta.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
 import 'package:ppg_hrv_app/logic/services/ppg_point_calc.dart';
-import 'package:image/image.dart';
 
 part 'camera_scan_state.dart';
 
@@ -15,7 +14,8 @@ class CameraScanCubit extends Cubit<CameraScanState> {
 
   void startScan() async {
     List<CameraDescription> cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    controller = CameraController(cameras[0], ResolutionPreset.high,
+        imageFormatGroup: ImageFormatGroup.jpeg);
     if (!controller.value.isInitialized) {
       await controller.initialize();
     }
@@ -27,12 +27,12 @@ class CameraScanCubit extends Cubit<CameraScanState> {
     controller.startImageStream((image) {
       calc.addTask(image);
     });
-    // controller.setFlashMode(FlashMode.torch);
+    controller.setFlashMode(FlashMode.torch);
     emit(ScanStarted(controller: controller));
   }
 
   void stopScan() {
-    if (state is ScanRunning) {
+    if (state is ScanRunning || state is ScanStarted) {
       controller.setFlashMode(FlashMode.off);
       if (controller.value.isStreamingImages) {
         controller.stopImageStream();

@@ -29,6 +29,11 @@ android {
     compileSdkVersion 30
 
     sourceSets {
+        main {
+            jni {
+                srcDirs 'src/main/jni', 'src/main/jniLibs'
+            }
+        }
         main.java.srcDirs += 'src/main/kotlin'
     }
 
@@ -39,6 +44,18 @@ android {
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        defaultConfig {
+        externalNativeBuild {
+            cmake {
+                // Enabling exceptions, RTTI
+                // And setting C++ standard version
+                cppFlags '-frtti -fexceptions -std=c++14'
+
+                // Shared runtime for shared libraries
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
     }
 
     buildTypes {
