@@ -14,7 +14,15 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = LineChartData(
+    final data = getData();
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: LineChart(data),
+    );
+  }
+
+  LineChartData getData() {
+    return LineChartData(
         titlesData: FlTitlesData(
           show: true,
           bottomTitles: SideTitles(
@@ -56,9 +64,5 @@ class Chart extends StatelessWidget {
             ),
           ),
         ]);
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: LineChart(data),
-    );
   }
 }

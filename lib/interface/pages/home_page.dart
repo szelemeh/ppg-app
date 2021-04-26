@@ -14,7 +14,12 @@ class HomePage extends StatelessWidget {
       body: BlocBuilder<CameraScanCubit, CameraScanState>(
           builder: (context, state) {
         if (state is ScanFinished) {
-          return Chart(points: state.points);
+          return Center(
+            child: Container(
+              child: Chart(points: state.points),
+              height: 250.0,
+            ),
+          );
         }
         return Center();
       }),
