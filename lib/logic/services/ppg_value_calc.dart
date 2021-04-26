@@ -33,7 +33,7 @@ class PpgValueCalc {
         0, image.planes[0].bytes.length, image.planes[0].bytes);
 
     int ppgValue =
-        getPpgValue(imageBytesPointer, image.planes[0].bytes.length, 230);
+        getPpgValue(imageBytesPointer, image.planes[0].bytes.length, 225);
 
     print(ppgValue);
     return ppgValue;

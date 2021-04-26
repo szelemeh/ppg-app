@@ -22,6 +22,18 @@ class Chart extends StatelessWidget {
   }
 
   LineChartData getData() {
+    int max = -1;
+    int min = 10000;
+    for (final point in points) {
+      print(point);
+      if (point.value > max) max = point.value;
+      if (point.value < min) min = point.value;
+    }
+
+    final newPoints = points
+        .map((e) => PpgPoint(timestamp: e.timestamp, value: max - e.value))
+        .toList();
+
     return LineChartData(
         titlesData: FlTitlesData(
           show: true,
@@ -46,7 +58,7 @@ class Chart extends StatelessWidget {
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: points
+            spots: newPoints
                 .map((p) => FlSpot(p.timestamp.toDouble(), p.value.toDouble()))
                 .toList(),
             isCurved: true,

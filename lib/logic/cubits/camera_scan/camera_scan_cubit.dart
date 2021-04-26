@@ -14,7 +14,7 @@ class CameraScanCubit extends Cubit<CameraScanState> {
 
   void startScan() async {
     List<CameraDescription> cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.high,
+    controller = CameraController(cameras[0], ResolutionPreset.medium,
         imageFormatGroup: ImageFormatGroup.jpeg);
     if (!controller.value.isInitialized) {
       await controller.initialize();
