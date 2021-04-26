@@ -50,3 +50,4 @@ test_assets
 ios/Classes/include/opencv2
 android/app/src/main/cmakeLibs
 ios/Classes/cmake-build-debug
+ios/Classes/assets

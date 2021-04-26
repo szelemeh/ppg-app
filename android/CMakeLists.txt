@@ -12,8 +12,10 @@ add_library(ppg_cpp SHARED
     ../ios/Classes/include/converter.h 
     ../ios/Classes/src/converter.cpp 
     ../ios/Classes/include/evaluator.h 
-    ../ios/Classes/src/evaluator.cpp)
+    ../ios/Classes/src/evaluator.cpp
+    ../ios/Classes/include/calibrator.h 
+    ../ios/Classes/src/calibrator.cpp
+    )
 
-# add_executable(main src/main.cpp src/ppg.cpp include/ppg.h include/converter.h src/converter.cpp include/evaluator.h src/evaluator.cpp src/ppg.cpp include/ppg.h)
 
 target_link_libraries(ppg_cpp lib_opencv)

@@ -3,6 +3,7 @@
 #include <vector>
 #include "../include/ppg.h"
 #include "evaluator.cpp"
+#include "calibrator.cpp"
 
 
 using namespace std;
@@ -16,7 +17,7 @@ vector<uint8_t> readVectorFromDisk(const string &filePath) {
     return data;
 }
 
-int main(int argc, char const *argv[]) {
+void video_test() {
     string filename = "/Users/subzarro/Desktop/ZSC/etap2/test_video.mp4";
     VideoCapture capture(filename);
     Mat frame;
@@ -39,5 +40,16 @@ int main(int argc, char const *argv[]) {
     }
     waitKey(0); // key press to close window
     // releases and window destroy are automatic in C++ interface
+}
+
+void calibrationTest() {
+    Mat frame = imread("/Users/subzarro/SchoolProjects/ppg_hrv_app/ios/Classes/assets/scan.jpg");
+    FrameStats r = calibrateFrame(frame);
+    cout << r.redMax << endl;
+    cout << r.redMin << endl;
+}
+
+int main(int argc, char const *argv[]) {
+    calibrationTest();
     return 0;
 }
