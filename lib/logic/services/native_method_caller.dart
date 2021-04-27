@@ -14,11 +14,11 @@ typedef GetPppgValue = int Function(Pointer<Uint8>, int, int);
 typedef calibrate_frame_func = Pointer<Int32> Function(Pointer<Uint8>, Int32);
 typedef CalibrateFrame = Pointer<Int32> Function(Pointer<Uint8>, int);
 
-class PpgValueCalc {
+class NativeMethodCaller {
   late GetPppgValue _getPpgValue;
   late CalibrateFrame _calibrateFrame;
 
-  PpgValueCalc() {
+  NativeMethodCaller() {
     final DynamicLibrary calcImageLib = Platform.isAndroid
         ? DynamicLibrary.open("libppg_cpp.so")
         : DynamicLibrary.process();

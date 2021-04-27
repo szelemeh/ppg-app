@@ -29,8 +29,17 @@ class Chart extends StatelessWidget {
       if (point.value > max) max = point.value;
       if (point.value < min) min = point.value;
     }
+    final averaged = <PpgPoint>[];
+    for (int i = 0; i < points.length - 2; i+=3) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
+      final p3 = points[i + 2];
+      averaged.add(PpgPoint(
+          timestamp: (p1.timestamp + p2.timestamp+ p3.timestamp) ~/ 3,
+          value: (p1.value + p2.value+ p3.value) ~/ 3));
+    }
 
-    final newPoints = points
+    final newPoints = averaged
         .map((e) => PpgPoint(timestamp: e.timestamp, value: max - e.value))
         .toList();
 
@@ -64,6 +73,7 @@ class Chart extends StatelessWidget {
             isCurved: true,
             colors: gradientColors,
             barWidth: 2,
+            curveSmoothness: 0.35,
             isStrokeCapRound: true,
             dotData: FlDotData(
               show: false,
