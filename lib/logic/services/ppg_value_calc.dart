@@ -32,13 +32,13 @@ class PpgValueCalc {
         .asFunction<CalibrateFrame>();
   }
 
-  PpgPoint evaluate(CameraImage img) {
+  PpgPoint evaluate(CameraImage img, int redThreshold) {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     Pointer<Uint8> imageBytesPointer = this._getImageBytesPointer(img);
 
     int ppgValue =
-        _getPpgValue(imageBytesPointer, img.planes[0].bytes.length, 225);
+        _getPpgValue(imageBytesPointer, img.planes[0].bytes.length, redThreshold);
 
     print(ppgValue);
     return PpgPoint(

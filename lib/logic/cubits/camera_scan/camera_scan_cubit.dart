@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:meta/meta.dart';
+import 'package:ppg_hrv_app/logic/models/frame_stats.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
 import 'package:ppg_hrv_app/logic/services/ppg_point_calc.dart';
 
