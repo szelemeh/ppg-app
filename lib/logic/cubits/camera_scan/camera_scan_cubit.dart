@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:meta/meta.dart';
@@ -8,36 +10,25 @@ part 'camera_scan_state.dart';
 
 class CameraScanCubit extends Cubit<CameraScanState> {
   final List<PpgPoint> ppgPointList = [];
-  final PpgService calc = PpgService();
-  late final CameraController controller;
+  final PpgService ppgService = PpgService();
+
   CameraScanCubit() : super(CameracubitInitial());
 
   void startScan() async {
-    List<CameraDescription> cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium,
-        imageFormatGroup: ImageFormatGroup.jpeg);
-    if (!controller.value.isInitialized) {
-      await controller.initialize();
-    }
-    calc.initialize();
-    calc.getResultsStream().listen((ppgPoint) {
+    await ppgService.initialize();
+    await ppgService.start();
+    ppgService.getResultsStream().listen((ppgPoint) {
       ppgPointList.add(ppgPoint);
-      emit(ScanRunning(radius: ppgPoint.value, controller: controller));
+      emit(ScanRunning(
+          radius: ppgPoint.value, controller: ppgService.cameraController));
     });
-    controller.startImageStream((image) {
-      calc.addTask(image);
-    });
-    controller.setFlashMode(FlashMode.torch);
-    emit(ScanStarted(controller: controller));
+    emit(ScanStarted(controller: ppgService.cameraController));
   }
 
   void stopScan() {
     if (state is ScanRunning || state is ScanStarted) {
-      controller.setFlashMode(FlashMode.off);
-      if (controller.value.isStreamingImages) {
-        controller.stopImageStream();
-      }
-      calc.dispose();
+      ppgService.stop();
+      ppgService.dispose();
       int initialTime = ppgPointList[0].timestamp;
       List<PpgPoint> shifted = ppgPointList
           .map((p) =>

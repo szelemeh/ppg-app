@@ -62,7 +62,7 @@ class CalibrationHandler {
     });
   }
 
-  void addImage(CameraImage img) {
+  void handleImage(CameraImage img) {
     _input.add(img);
   }
 

@@ -1,35 +1,60 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:ppg_hrv_app/logic/models/frame_stats.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
 import 'package:ppg_hrv_app/logic/services/calibration_handler.dart';
 import 'package:ppg_hrv_app/logic/services/evaluation_handler.dart';
-import 'package:ppg_hrv_app/logic/services/native_method_caller.dart';
 
 const int DEFAULT_RED_THRESHOLD = 246;
+const int CALIBRATION_TIME = 5;
+
+enum PpgServiceState { notInitialized, initialized, calibration, evaluation }
 
 class PpgService {
-  late Isolate _isolate;
   final _results = StreamController<PpgPoint>();
-  late final CalibrationHandler _calibrationHandler;
-  late final EvaluationHandler _evaluationHandler;
+  late CalibrationHandler _calibrationHandler;
+  late EvaluationHandler _evaluationHandler;
   final List<FrameStats> frameStatsList = [];
   int redThreshold = DEFAULT_RED_THRESHOLD;
-  bool _calibration = true;
+  late final CameraController _controller;
+  PpgServiceState _state = PpgServiceState.notInitialized;
 
-  void initialize() async {
-    await startCalibratingIsolate();
-    Future.delayed(Duration(seconds: 5), () async {
-      _updateRedThreshold();
-      _calibration = false;
-      await startComputingIsolate();
-    });
+  CameraController get cameraController => _controller;
+
+  initialize() async {
+    if (_state == PpgServiceState.notInitialized) {
+      List<CameraDescription> cameras = await availableCameras();
+      _controller = CameraController(cameras[0], ResolutionPreset.medium,
+          imageFormatGroup: ImageFormatGroup.jpeg);
+      if (!_controller.value.isInitialized) {
+        await _controller.initialize();
+      }
+    }
   }
 
-  startComputingIsolate() async {
+  start() async {
+    await _startCalibratingIsolate();
+    Future.delayed(Duration(seconds: CALIBRATION_TIME), () async {
+      _updateRedThreshold();
+      _state = PpgServiceState.evaluation;
+      await _startComputingIsolate();
+    });
+    _controller.startImageStream((image) {
+      _addTask(image);
+    });
+    _controller.setFlashMode(FlashMode.torch);
+  }
+
+  stop() {
+    _controller.setFlashMode(FlashMode.off);
+    if (_controller.value.isStreamingImages) {
+      _controller.stopImageStream();
+    }
+  }
+
+  _startComputingIsolate() async {
     _evaluationHandler = EvaluationHandler();
     try {
       await _evaluationHandler.initialize();
@@ -40,7 +65,7 @@ class PpgService {
     }
   }
 
-  startCalibratingIsolate() async {
+  _startCalibratingIsolate() async {
     _calibrationHandler = CalibrationHandler();
     try {
       await _calibrationHandler.initialize();
@@ -55,18 +80,23 @@ class PpgService {
     return _results.stream;
   }
 
-  void addTask(CameraImage img) {
-      if (_calibration)
-        _calibrationHandler.addImage(img);
-      else
-        _evaluationHandler.addImage(img);
+  void _addTask(CameraImage img) {
+    switch (_state) {
+      case PpgServiceState.calibration:
+        _calibrationHandler.handleImage(img);
+        break;
+      case PpgServiceState.evaluation:
+        _evaluationHandler.handleImage(img);
+        break;
+      default:
+        break;
+    }
   }
 
   void dispose() {
     _results.close();
     _calibrationHandler.dispose();
     _evaluationHandler.dispose();
-    _isolate.kill();
   }
 
   void _updateRedThreshold() {
