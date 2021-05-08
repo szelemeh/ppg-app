@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
@@ -25,6 +25,11 @@ class CameraScanCubit extends Cubit<CameraScanState> {
     emit(ScanStarted(controller: ppgService.cameraController));
   }
 
+  printJson(List<PpgPoint> points) {
+    final maps = points.map((point) => point.toMap()).toList();
+    print(json.encode(maps));
+  }
+
   void stopScan() {
     if (state is ScanRunning || state is ScanStarted) {
       ppgService.stop();
@@ -36,7 +41,8 @@ class CameraScanCubit extends Cubit<CameraScanState> {
           .toList();
       int part = shifted.length ~/ 10;
       shifted = shifted.getRange(part, shifted.length - part).toList();
-      emit(ScanFinished(points: shifted));
+      printJson(ppgPointList);
+      emit(ScanFinished(points: ppgPointList));
     }
   }
 }

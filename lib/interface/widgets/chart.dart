@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
@@ -25,18 +27,17 @@ class Chart extends StatelessWidget {
     int max = -1;
     int min = 10000;
     for (final point in points) {
-      print(point);
       if (point.value > max) max = point.value;
       if (point.value < min) min = point.value;
     }
     final averaged = <PpgPoint>[];
-    for (int i = 0; i < points.length - 2; i+=3) {
+    for (int i = 0; i < points.length - 2; i += 3) {
       final p1 = points[i];
       final p2 = points[i + 1];
       final p3 = points[i + 2];
       averaged.add(PpgPoint(
-          timestamp: (p1.timestamp + p2.timestamp+ p3.timestamp) ~/ 3,
-          value: (p1.value + p2.value+ p3.value) ~/ 3));
+          timestamp: (p1.timestamp + p2.timestamp + p3.timestamp) ~/ 3,
+          value: (p1.value + p2.value + p3.value) ~/ 3));
     }
 
     final newPoints = averaged

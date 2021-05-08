@@ -31,7 +31,7 @@ class CalibrationHandler {
         }
       });
     } catch (e) {
-      print("Error: $e");
+      log("Error: $e");
     }
   }
 
