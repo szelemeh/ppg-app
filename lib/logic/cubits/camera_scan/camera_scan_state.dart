@@ -22,9 +22,9 @@ class ScanRunning extends CameraScanState {
 }
 
 class ScanFinished extends CameraScanState {
-  final List<PpgPoint> points;
+  final Scan scan;
 
   ScanFinished({
-    required this.points,
+    required this.scan,
   });
 }
