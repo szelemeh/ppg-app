@@ -35,7 +35,7 @@ class CameraScanCubit extends Cubit<CameraScanState> {
           .toList();
       int part = shifted.length ~/ 10;
       shifted = shifted.getRange(part, shifted.length - part).toList();
-      emit(ScanFinished(scan: Scan(ppgPointList)));
+      emit(ScanFinished(scan: Scan(ppgPointList, 20)));
     }
   }
 }

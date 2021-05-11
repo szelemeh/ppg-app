@@ -8,7 +8,7 @@ const API = 'ppg-app-api.herokuapp.com';
 
 class MetricsService {
   static Future<List<Metric>> getMetrics(Scan scan) async {
-    final url = Uri.https(API, 'ppg');
+    final url = Uri.https(API, 'metrics');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -17,6 +17,7 @@ class MetricsService {
       body: scan.toJson(),
     );
     final data = json.decode(response.body);
-    return [Metric.fromMap(data['metrics'][0])];
+    List<Metric> metrics = data['metrics'].map<Metric>((metricMap) => Metric.fromMap(metricMap)).toList();
+    return metrics;
   }
 }

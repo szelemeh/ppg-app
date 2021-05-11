@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ppg_hrv_app/interface/pages/scan_page.dart';
 import 'package:ppg_hrv_app/interface/widgets/chart.dart';
-import 'package:ppg_hrv_app/interface/widgets/metrics.dart';
+import 'package:ppg_hrv_app/interface/widgets/metric_list.dart';
 import 'package:ppg_hrv_app/logic/cubits/camera_scan/camera_scan_cubit.dart';
 import 'package:ppg_hrv_app/logic/cubits/metrics/metrics_cubit.dart';
 
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
                   child: Chart(points: state.scan.points),
                   height: 250.0,
                 ),
-                Metrics()
+                MetricList()
               ],
             ),
           );

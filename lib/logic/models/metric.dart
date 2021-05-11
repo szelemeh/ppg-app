@@ -3,13 +3,15 @@ import 'dart:convert';
 class Metric {
   final String type;
   final int value;
+  final bool rating;
 
-  Metric(this.type, this.value);
+  Metric(this.type, this.value, this.rating);
 
   Map<String, dynamic> toMap() {
     return {
       'type': type,
       'value': value,
+      'rating': rating,
     };
   }
 
@@ -17,6 +19,7 @@ class Metric {
     return Metric(
       map['type'],
       map['value'],
+      map['rating'],
     );
   }
 
