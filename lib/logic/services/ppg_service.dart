@@ -7,7 +7,7 @@ import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
 import 'package:ppg_hrv_app/logic/services/calibration_handler.dart';
 import 'package:ppg_hrv_app/logic/services/evaluation_handler.dart';
 
-const int DEFAULT_RED_THRESHOLD = 246;
+const int DEFAULT_RED_THRESHOLD = 250;
 const int CALIBRATION_TIME = 5;
 
 enum PpgServiceState { notInitialized, initialized, calibration, evaluation }
@@ -31,10 +31,14 @@ class PpgService {
       if (!_controller.value.isInitialized) {
         await _controller.initialize();
       }
+      _state = PpgServiceState.initialized;
     }
   }
 
   start() async {
+    _state = PpgServiceState.calibration;
+    await _controller.setFlashMode(FlashMode.torch);
+    await Future.delayed(Duration(seconds: 1));
     await _startCalibratingIsolate();
     Future.delayed(Duration(seconds: CALIBRATION_TIME), () async {
       _updateRedThreshold();
@@ -44,7 +48,6 @@ class PpgService {
     _controller.startImageStream((image) {
       _addTask(image);
     });
-    _controller.setFlashMode(FlashMode.torch);
   }
 
   stop() {
@@ -69,8 +72,9 @@ class PpgService {
     _calibrationHandler = CalibrationHandler();
     try {
       await _calibrationHandler.initialize();
-      _calibrationHandler.outputStream
-          .listen((frameStats) => frameStatsList.add(frameStats));
+      _calibrationHandler.outputStream.listen((frameStats) {
+        frameStatsList.add(frameStats);
+      });
     } catch (error) {
       log('PpgService: error starting calibration handler: $error');
     }
@@ -109,8 +113,10 @@ class PpgService {
     double maxMean = maxSum / frameStatsList.length;
     double minMean = minSum / frameStatsList.length;
     try {
-      redThreshold = (maxMean - 0.15 * (maxMean - minMean)).toInt();
+      redThreshold = (maxMean - 0.05 * (maxMean - minMean)).toInt();
     } catch (e) {
+      log(e.toString());
+      log('PpgService: could not calculate red threshold. Using the default one.');
       redThreshold = DEFAULT_RED_THRESHOLD;
     }
     log("PpgService: red threshold is set to $redThreshold");
