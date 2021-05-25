@@ -40,7 +40,6 @@ class NativeMethodCaller {
     int ppgValue =
         _getPpgValue(imageBytesPointer, img.planes[0].bytes.length, redThreshold);
 
-    print(ppgValue);
     return PpgPoint(
       timestamp: timestamp,
       value: ppgValue.toDouble(),

@@ -10,7 +10,7 @@ class MetricsLoading extends MetricsState {}
 class MetricsNotLoaded extends MetricsState {}
 
 class MetricsLoaded extends MetricsState {
-  final List<Metric> metrics;
+  final MetricsResponse response;
 
-  MetricsLoaded(this.metrics);
+  MetricsLoaded(this.response);
 }

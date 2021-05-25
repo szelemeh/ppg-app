@@ -8,7 +8,7 @@ class MetricList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MetricsCubit, MetricsState>(builder: (context, state) {
       if (state is MetricsLoaded) {
-        List<Widget> metrics = state.metrics
+        List<Widget> metrics = state.response.metrics
             .map(
               (metric) => MetricView(data: metric),
             )
