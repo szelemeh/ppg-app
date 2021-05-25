@@ -43,7 +43,7 @@ class NativeMethodCaller {
     print(ppgValue);
     return PpgPoint(
       timestamp: timestamp,
-      value: ppgValue,
+      value: ppgValue.toDouble(),
     );
   }
 

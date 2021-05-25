@@ -13,7 +13,7 @@ class ScanStarted extends CameraScanState {
 }
 
 class ScanRunning extends CameraScanState {
-  final int radius;
+  final double radius;
   final CameraController controller;
   ScanRunning({
     required this.controller,

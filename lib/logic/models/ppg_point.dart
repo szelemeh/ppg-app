@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class PpgPoint {
   final int timestamp;
-  final int value;
+  final double value;
 
   PpgPoint({
     required this.timestamp,
@@ -14,7 +14,7 @@ class PpgPoint {
 
   PpgPoint copyWith({
     int? timestamp,
-    int? value,
+    double? value,
   }) {
     return PpgPoint(
       timestamp: timestamp ?? this.timestamp,

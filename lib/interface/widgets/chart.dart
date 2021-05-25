@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ppg_hrv_app/logic/models/ppg_point.dart';
@@ -24,29 +22,12 @@ class Chart extends StatelessWidget {
   }
 
   LineChartData getData() {
-    int max = -1;
-    int min = 10000;
-    for (final point in points) {
-      if (point.value > max) max = point.value;
-      if (point.value < min) min = point.value;
-    }
-    final averaged = <PpgPoint>[];
-    for (int i = 0; i < points.length - 2; i += 3) {
-      final p1 = points[i];
-      final p2 = points[i + 1];
-      final p3 = points[i + 2];
-      averaged.add(PpgPoint(
-          timestamp: (p1.timestamp + p2.timestamp + p3.timestamp) ~/ 3,
-          value: (p1.value + p2.value + p3.value) ~/ 3));
-    }
-
-    final newPoints = averaged
-        .map((e) => PpgPoint(timestamp: e.timestamp, value: max - e.value))
-        .toList();
 
     return LineChartData(
+        borderData: FlBorderData(show: false),
+        extraLinesData: ExtraLinesData(),
         titlesData: FlTitlesData(
-          show: true,
+          show: false,
           bottomTitles: SideTitles(
             showTitles: true,
             reservedSize: 22,
@@ -68,7 +49,7 @@ class Chart extends StatelessWidget {
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: newPoints
+            spots: points
                 .map((p) => FlSpot(p.timestamp.toDouble(), p.value.toDouble()))
                 .toList(),
             isCurved: true,
