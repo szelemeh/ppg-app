@@ -15,37 +15,16 @@ class Chart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = getData();
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: LineChart(data),
-    );
+    return LineChart(data);
   }
 
   LineChartData getData() {
 
     return LineChartData(
+      gridData: FlGridData(show: false),
         borderData: FlBorderData(show: false),
-        extraLinesData: ExtraLinesData(),
         titlesData: FlTitlesData(
           show: false,
-          bottomTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 22,
-            getTextStyles: (value) => const TextStyle(
-                color: Color(0xff68737d),
-                fontWeight: FontWeight.bold,
-                fontSize: 16),
-            getTitles: (value) {
-              int show = (value ~/ 1000);
-              if (prev == show) {
-                return '';
-              } else {
-                prev = show;
-                return show.toString();
-              }
-            },
-            margin: 8,
-          ),
         ),
         lineBarsData: [
           LineChartBarData(
@@ -54,7 +33,7 @@ class Chart extends StatelessWidget {
                 .toList(),
             isCurved: true,
             colors: gradientColors,
-            barWidth: 2,
+            barWidth: 1,
             curveSmoothness: 0.35,
             isStrokeCapRound: true,
             dotData: FlDotData(

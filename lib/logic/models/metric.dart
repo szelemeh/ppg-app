@@ -3,7 +3,7 @@ import 'dart:convert';
 class Metric {
   final String type;
   final int value;
-  final bool rating;
+  final bool? rating;
 
   Metric(this.type, this.value, this.rating);
 

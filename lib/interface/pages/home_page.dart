@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ppg_hrv_app/interface/pages/scan_page.dart';
 import 'package:ppg_hrv_app/interface/widgets/chart.dart';
+import 'package:ppg_hrv_app/interface/widgets/measurement.dart';
 import 'package:ppg_hrv_app/interface/widgets/metric_list.dart';
 import 'package:ppg_hrv_app/logic/cubits/camera_scan/camera_scan_cubit.dart';
 import 'package:ppg_hrv_app/logic/cubits/metrics/metrics_cubit.dart';
@@ -22,24 +23,15 @@ class HomePage extends StatelessWidget {
           metricsCubit.loadMetrics(state.scan);
           ppgPointsCubit.normalizePpgPoints(state.scan.points);
 
-          return Center(
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                BlocBuilder<PpgPointsCubit, PpgPointsState>(
-                  builder: (context, state) {
-                    if (state is PpgPointsLoaded) {
-                      return Container(
-                        child: Chart(points: state.points),
-                        height: 100.0,
-                      );
-                    }
-                    return Center(child: CircularProgressIndicator());
-                  },
-                ),
-                MetricList()
+                Measurement(),
               ],
             ),
           );
+          
         }
         return Center();
       }),
