@@ -18,39 +18,41 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("PPG HRV Scanner"),
       ),
-      body: BlocBuilder<CameraScanCubit, CameraScanState>(
-          builder: (context, state) {
-        if (state is ScanFinished) {
-          metricsCubit.loadMetrics(state.scan);
-          ppgPointsCubit.normalizePpgPoints(state.scan.points);
+      body: SingleChildScrollView(
+        child: BlocBuilder<CameraScanCubit, CameraScanState>(
+            builder: (context, state) {
+          if (state is ScanFinished) {
+            metricsCubit.loadMetrics(state.scan);
+            ppgPointsCubit.normalizePpgPoints(state.scan.points);
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Measurement(),
-              ],
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Measurement(),
+                ],
+              ),
+            );
+          }
+          return Center(
+            child: EmptyWidget(
+              image: null,
+              packageImage: PackageImage.Image_1,
+              title: 'No measurements',
+              subTitle: 'No measurements made yet',
+              titleTextStyle: TextStyle(
+                fontSize: 22,
+                color: Color(0xff9da9c7),
+                fontWeight: FontWeight.w500,
+              ),
+              subtitleTextStyle: TextStyle(
+                fontSize: 14,
+                color: Color(0xffabb8d6),
+              ),
             ),
           );
-        }
-        return Center(
-          child: EmptyWidget(
-            image: null,
-            packageImage: PackageImage.Image_1,
-            title: 'No measurements',
-            subTitle: 'No measurements made yet',
-            titleTextStyle: TextStyle(
-              fontSize: 22,
-              color: Color(0xff9da9c7),
-              fontWeight: FontWeight.w500,
-            ),
-            subtitleTextStyle: TextStyle(
-              fontSize: 14,
-              color: Color(0xffabb8d6),
-            ),
-          ),
-        );
-      }),
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
           onPressed: () => startScan(context),
           tooltip: 'Start scan',

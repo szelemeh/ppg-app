@@ -26,7 +26,9 @@ class PpgService {
   initialize() async {
     if (_state == PpgServiceState.notInitialized) {
       List<CameraDescription> cameras = await availableCameras();
-      _controller = CameraController(cameras[0], ResolutionPreset.medium,
+      print(cameras);
+      print(cameras.length);
+      _controller = CameraController(cameras[0], ResolutionPreset.low,
           imageFormatGroup: ImageFormatGroup.jpeg);
       if (!_controller.value.isInitialized) {
         await _controller.initialize();
@@ -38,6 +40,7 @@ class PpgService {
   start() async {
     _state = PpgServiceState.calibration;
     await _controller.setFlashMode(FlashMode.torch);
+    await _controller.setFocusMode(FocusMode.locked);
     await Future.delayed(Duration(seconds: 1));
     await _startCalibratingIsolate();
     Future.delayed(Duration(seconds: CALIBRATION_TIME), () async {

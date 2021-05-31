@@ -9,11 +9,12 @@ part 'camera_scan_state.dart';
 
 class CameraScanCubit extends Cubit<CameraScanState> {
   final List<PpgPoint> ppgPointList = [];
-  final PpgService ppgService = PpgService();
+  late PpgService ppgService;
 
   CameraScanCubit() : super(CameracubitInitial());
 
   void startScan() async {
+    ppgService = PpgService();
     await ppgService.initialize();
     await ppgService.start();
     ppgService.getResultsStream().listen((ppgPoint) {
@@ -28,13 +29,6 @@ class CameraScanCubit extends Cubit<CameraScanState> {
     if (state is ScanRunning || state is ScanStarted) {
       ppgService.stop();
       ppgService.dispose();
-      int initialTime = ppgPointList[0].timestamp;
-      List<PpgPoint> shifted = ppgPointList
-          .map((p) =>
-              PpgPoint(timestamp: (p.timestamp - initialTime), value: p.value))
-          .toList();
-      int part = shifted.length ~/ 10;
-      shifted = shifted.getRange(part, shifted.length - part).toList();
       emit(ScanFinished(scan: Scan(ppgPointList, 20)));
     }
   }
