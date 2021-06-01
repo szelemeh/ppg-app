@@ -116,7 +116,7 @@ class PpgService {
     double maxMean = maxSum / frameStatsList.length;
     double minMean = minSum / frameStatsList.length;
     try {
-      redThreshold = (maxMean - 0.05 * (maxMean - minMean)).toInt();
+      redThreshold = (maxMean - 0.1 * (maxMean - minMean)).toInt();
     } catch (e) {
       log(e.toString());
       log('PpgService: could not calculate red threshold. Using the default one.');

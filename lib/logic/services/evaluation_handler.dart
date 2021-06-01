@@ -9,7 +9,6 @@ import 'native_method_caller.dart';
 
 const int DEFAULT_RED_THRESHOLD = 246;
 
-
 class EvaluationHandler {
   late Isolate _isolate;
   final ReceivePort _receivePort = ReceivePort();
@@ -61,8 +60,10 @@ class EvaluationHandler {
       if (msg is int) {
         redThreshold = msg;
       } else if (msg is CameraImage) {
-        PpgPoint ppgPoint = nativeMethodCaller.evaluate(msg, redThreshold);
-        sendPort.send(ppgPoint);
+        PpgPoint? ppgPoint = nativeMethodCaller.evaluate(msg, redThreshold);
+        if (ppgPoint != null) {
+          sendPort.send(ppgPoint);
+        }
       }
     });
   }

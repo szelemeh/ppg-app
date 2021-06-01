@@ -7,7 +7,6 @@ import 'package:ppg_hrv_app/logic/models/frame_stats.dart';
 
 import 'native_method_caller.dart';
 
-
 class CalibrationHandler {
   late Isolate _isolate;
   final ReceivePort _receivePort = ReceivePort();
@@ -56,8 +55,10 @@ class CalibrationHandler {
     final NativeMethodCaller methodCaller = NativeMethodCaller();
     receivePort.listen((msg) {
       if (msg is CameraImage) {
-        FrameStats stats = methodCaller.getFrameStats(msg);
-        sendPort.send(stats);
+        FrameStats? stats = methodCaller.getFrameStats(msg);
+        if (stats != null) {
+          sendPort.send(stats);
+        }
       }
     });
   }

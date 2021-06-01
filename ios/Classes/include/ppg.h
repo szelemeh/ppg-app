@@ -4,6 +4,7 @@
 #include "../include/converter.h"
 #include "../include/evaluator.h"
 #include "../include/calibrator.h"
+#include "../include/verifier.h"
 
 extern "C" __attribute__((visibility("default"))) __attribute__((used))
 int32_t getPpgValue(uint8_t *bytes, int32_t size, int32_t redThreshold);

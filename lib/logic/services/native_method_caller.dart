@@ -32,13 +32,19 @@ class NativeMethodCaller {
         .asFunction<CalibrateFrame>();
   }
 
-  PpgPoint evaluate(CameraImage img, int redThreshold) {
+  PpgPoint? evaluate(CameraImage img, int redThreshold) {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     Pointer<Uint8> imageBytesPointer = this._getImageBytesPointer(img);
 
-    int ppgValue =
-        _getPpgValue(imageBytesPointer, img.planes[0].bytes.length, redThreshold);
+    int ppgValue = _getPpgValue(
+        imageBytesPointer, img.planes[0].bytes.length, redThreshold);
+
+    // ppgValue -1 means that img did not pass verification
+    if (ppgValue == -1) {
+      print('HOLA EVALUATION');
+      return null;
+    }
 
     return PpgPoint(
       timestamp: timestamp,
@@ -46,11 +52,17 @@ class NativeMethodCaller {
     );
   }
 
-  FrameStats getFrameStats(CameraImage img) {
+  FrameStats? getFrameStats(CameraImage img) {
     Pointer<Uint8> imageBytesPointer = this._getImageBytesPointer(img);
     Pointer<Int32> result =
         _calibrateFrame(imageBytesPointer, img.planes[0].bytes.length);
     List<int> statsList = result.asTypedList(2).toList();
+
+    // all stats with value -1 means that img did not pass verification
+    if ((statsList[0] == -1) && (statsList[1] == -1)) {
+      print('HOLA CALIBRATION');
+      return null;
+    }
     FrameStats stats = FrameStats(redMax: statsList[0], redMin: statsList[1]);
     return stats;
   }

@@ -7,6 +7,7 @@ set(OpenCV_DIR /usr/local/Cellar/opencv/4.5.2/lib/cmake/opencv4)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+include_directories(${Boost_INCLUDE_DIRS})
 add_library(ppg_cpp_app SHARED
         src/ppg.cpp
         include/ppg.h
@@ -15,7 +16,11 @@ add_library(ppg_cpp_app SHARED
         include/evaluator.h
         src/evaluator.cpp
         include/calibrator.h
-        src/calibrator.cpp)
+        src/calibrator.cpp
+        include/verifier.h
+        src/verifier.cpp)
+target_link_libraries(ppg_cpp_app ${Boost_LIBRARIES})
+
 
 add_executable(main
         src/main.cpp

@@ -44,12 +44,19 @@ void video_test() {
 
 void calibrationTest() {
     Mat frame = imread("/Users/subzarro/SchoolProjects/ppg_hrv_app/ios/Classes/assets/scan.jpg");
-    FrameStats r = calibrateFrame(frame);
-    cout << r.redMax << endl;
-    cout << r.redMin << endl;
+//    FrameStats r = calibrateFrame(frame);
+//    cout << r.redMax << endl;
+//    cout << r.redMin << endl;
+}
+
+void verificationTest() {
+    cout << "sdfasdf" << endl;
+    Mat frame = imread("/Users/subzarro/SchoolProjects/ppg_app/ios/Classes/assets/scan.jpg");
+    bool r = verify(frame);
+    cout << r << endl;
 }
 
 int main(int argc, char const *argv[]) {
-    calibrationTest();
+    verificationTest();
     return 0;
 }

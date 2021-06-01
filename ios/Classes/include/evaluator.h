@@ -1,4 +1,5 @@
 #ifndef PPG_CPP_APP_EVALUATOR_H
+#define PPG_CPP_APP_EVALUATOR_H
 
 #include <math.h>
 
@@ -14,6 +15,5 @@
 
 int evaluatePpgValue(const cv::Mat& img, int redThreshold);
 
-#define PPG_CPP_APP_EVALUATOR_H
 
 #endif //PPG_CPP_APP_EVALUATOR_H
