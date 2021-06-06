@@ -28,6 +28,9 @@ class StressPanel extends StatelessWidget {
                 Text(buildStressLevelText(stressLevel),
                     style: TextStyle(color: color))
               ],
+            ),
+            Container(
+              height: 16,
             )
           ]),
         );
