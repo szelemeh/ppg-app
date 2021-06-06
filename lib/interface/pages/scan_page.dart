@@ -31,9 +31,8 @@ class _ScanPageState extends State<ScanPage> {
               home: CameraPreview(
             state.controller,
             child: Center(
-              child: Text(
-                state.radius.toString(),
-                style: TextStyle(color: Colors.white),
+              child: CustomPaint(
+                painter: OpenPainter(state.radius),
               ),
             ),
           ));
@@ -48,4 +47,22 @@ class _ScanPageState extends State<ScanPage> {
     scanCubit.stopScan();
     super.dispose();
   }
+}
+
+class OpenPainter extends CustomPainter {
+  final double radius;
+
+  OpenPainter(this.radius);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint1 = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawCircle(Offset.zero, radius * 10, paint1);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

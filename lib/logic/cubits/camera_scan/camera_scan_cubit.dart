@@ -15,6 +15,7 @@ class CameraScanCubit extends Cubit<CameraScanState> {
 
   void startScan() async {
     ppgService = PpgService();
+    ppgPointList.clear();
     await ppgService.initialize();
     await ppgService.start();
     ppgService.getResultsStream().listen((ppgPoint) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ppg_hrv_app/interface/widgets/StressPanel.dart';
+import 'package:intl/intl.dart';
+import 'package:ppg_hrv_app/interface/widgets/stress_panel.dart';
 import 'package:ppg_hrv_app/interface/widgets/metric_list.dart';
 import 'package:ppg_hrv_app/logic/cubits/ppg_points/ppg_points_cubit.dart';
 
@@ -16,7 +17,7 @@ class Measurement extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              children: [Text('12:58, May 25')],
+              children: [Text(formatDate(DateTime.now()))],
             ),
             BlocBuilder<PpgPointsCubit, PpgPointsState>(
               builder: (context, state) {
@@ -30,7 +31,7 @@ class Measurement extends StatelessWidget {
               },
             ),
             Text(''),
-            StressPanel(stressLevel: 0.26),
+            StressPanel(),
             ExpansionTile(
               initiallyExpanded: false,
               title: Text('Details'),
@@ -42,3 +43,5 @@ class Measurement extends StatelessWidget {
     );
   }
 }
+
+String formatDate(DateTime date) => new DateFormat("H:mm, MMMM d").format(date);
